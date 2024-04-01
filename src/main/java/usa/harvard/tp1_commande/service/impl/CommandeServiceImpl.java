@@ -5,12 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usa.harvard.tp1_commande.bean.Commande;
+import usa.harvard.tp1_commande.bean.Paiement;
 import usa.harvard.tp1_commande.dao.CommandeDao;
 import usa.harvard.tp1_commande.service.facade.CommandeService;
 import usa.harvard.tp1_commande.ws.convertie.CommandeConverter;
 import usa.harvard.tp1_commande.ws.dto.CommandeDto;
 
 import java.util.List;
+
 @Service
 public class CommandeServiceImpl implements CommandeService {
 
@@ -28,33 +30,32 @@ public class CommandeServiceImpl implements CommandeService {
 
     @Override
     public int save(CommandeDto commandeDto) {
-        Commande existingCommande =commandeDao.findByRef(commandeDto.getRef());
-        if(commandeDto.getMontantPayeEspece()<0 || commandeDto.getMontantPayeCheque()<0 || commandeDto.getMontantTotal()<0){
+        Commande nouveauCommande = converter.toBean(commandeDto);
+        Commande existingCommande = commandeDao.findByRef(commandeDto.getRef());
+        if (commandeDto.getMontantPayeEspece() < 0 || commandeDto.getMontantPayeCheque() < 0 || commandeDto.getMontantTotal() < 0) {
             return -1;
-        }
-         else if (commandeDto.getMontantPayeEspece() +
-                        commandeDto.getMontantPayeCheque()>commandeDto.getMontantTotal()
+        } else if (commandeDto.getMontantPayeEspece() +
+                commandeDto.getMontantPayeCheque() > commandeDto.getMontantTotal()
         ) {
             return -2;
-        }
-        else if(commandeDto.getMontantTotal() == 0){
+        } else if (commandeDto.getMontantTotal() == 0) {
             return -3;
-        }
-         else if(existingCommande!=null){
-             BeanUtils.copyProperties(commandeDto,existingCommande);
-             commandeDao.save(existingCommande);
-             return 2;
-         }
-
-        else {
-            commandeDao.save(converter.toBean(commandeDto));
+        } else if (existingCommande != null) {
+            BeanUtils.copyProperties(commandeDto, existingCommande);
+            commandeDao.save(existingCommande);
+            return 2;
+        } else {
+            List<Paiement> list=nouveauCommande.getPaiementList();
+            nouveauCommande.setPaiementList(list);
+            commandeDao.save(nouveauCommande);
             return 1;
+
         }
     }
 
     @Override
     public CommandeDto findByRef(String ref) {
-        return converter.toDto(commandeDao.findByRef(ref)) ;
+        return converter.toDto(commandeDao.findByRef(ref));
     }
 
     @Override
@@ -68,16 +69,17 @@ public class CommandeServiceImpl implements CommandeService {
     }
 
     @Override
-    public int update(CommandeDto commandeDto)  {
+    public int update(CommandeDto commandeDto) {
         Commande existingCommande = commandeDao.findByRef(commandeDto.getRef());
-        if ( existingCommande != null) {
+        if (existingCommande != null) {
             save(commandeDto);
             return 1;
-        }
-        else{
+        } else {
             return -1;
         }
     }
+
+
 
     @Autowired
     private CommandeDao commandeDao;

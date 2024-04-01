@@ -11,7 +11,7 @@ import java.util.List;
 public class CommandeWs {
 
 
-    @GetMapping("")
+    @GetMapping
     public List<CommandeDto> findAll() {
         return commandeService.findAll();
     }
@@ -20,7 +20,7 @@ public class CommandeWs {
         return commandeService.deleteByRef(ref);
     }
 
-    @PostMapping("")
+    @PostMapping
     public int save(@RequestBody CommandeDto commandeDto) {
         return commandeService.save(commandeDto);
     }
@@ -39,7 +39,7 @@ public class CommandeWs {
         return commandeService.findPaye();
     }
 
-    @PutMapping("")
+    @PutMapping
     public int update(@RequestBody CommandeDto commandeDto) {
       return  commandeService.update(commandeDto);
     }

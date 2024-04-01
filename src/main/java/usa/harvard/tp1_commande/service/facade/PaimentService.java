@@ -19,5 +19,7 @@ public interface PaimentService {
     PaiementDto findByCode(String code);
 
     int deleteByCode(String code);
+
+    List<Paiement> findPaiementByCommandeRef(String refCommande);
 }
 

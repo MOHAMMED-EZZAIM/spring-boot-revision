@@ -20,5 +20,7 @@ import java.util.List;
      List<TypePaiementDto> findAll();
 
      int update(TypePaiementDto typePaiementNew);
+
+
     }
 

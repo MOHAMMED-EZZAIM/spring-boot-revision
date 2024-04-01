@@ -1,0 +1,57 @@
+typePaiement:
+{
+  "libelle": "Paiement par Cheque",
+  "code": "01234"
+}
+
+{
+  "code": "56789",
+  "libelle": "Paiement en espèces"
+}
+
+{
+  "code": "0001",
+  "libelle": "Paiement par carte de crédit"
+}
+
+
+commande:
+{
+  "ref": "c1",
+  "montantTotal": 100,
+  "montantPayeCheque": 10,
+  "montantPayeEspece": 10,
+  "paiements": []
+}
+
+{
+  "ref": "c2",
+  "montantTotal": 200,
+  "montantPayeCheque": 20,
+  "montantPayeEspece": 20,
+  "paiements": []
+}
+
+
+paiment:
+{
+  "code": "p1",
+                     "datePaiement": "01/04/2024 07:38:00",
+                     "montant": 100,
+                     "encaissement": false,
+                     "typePaiementDto": {
+                       "libelle": "Paiement par Cheque",
+                       "code": "01234"
+                     },
+                     "commandeDto": {
+                       "ref": "c2",
+                       "montantTotal": 200,
+                       "montantPayeCheque": 20,
+                       "montantPayeEspece": 20,
+                       "paiements": []
+  }
+}
+
+
+
+

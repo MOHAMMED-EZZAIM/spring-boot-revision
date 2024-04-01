@@ -1,5 +1,6 @@
 package usa.harvard.tp1_commande.ws.convertie;
 
+import jakarta.persistence.OneToMany;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,24 +22,43 @@ import static usa.harvard.tp1_commande.enume.TypePaimentEnum.ESPECE;
 
 @Component
 public class CommandeConverter {
-    public Commande toBean(CommandeDto dto){
-        Commande bean=new Commande();
-        BeanUtils.copyProperties(dto, bean);
-        return  bean;
+    private String ref;
+    private double montantTotal;
+    private double montantPayeCheque;
+    private double montantPayeEspece;
+
+    @OneToMany
+    private List<Paiement> paiementList;
+
+    public Commande toBean(CommandeDto dto) {
+        Commande bean = new Commande();
+        bean.setPaiementList(paiementConverter.toBean(dto.getPaiements()));
+        bean.setMontantPayeEspece(dto.getMontantPayeEspece());
+        bean.setMontantPayeCheque(dto.getMontantPayeCheque());
+        bean.setMontantTotal(dto.getMontantTotal());
+        bean.setRef(dto.getRef());
+        return bean;
     }
-    public CommandeDto toDto(Commande bean){
-        CommandeDto dto=new CommandeDto();
-       BeanUtils.copyProperties(bean, dto);
+
+    public CommandeDto toDto(Commande bean) {
+        CommandeDto dto = new CommandeDto();
+        dto.setPaiements(paiementConverter.toDto(bean.getPaiementList()));
+        dto.setMontantPayeEspece(bean.getMontantPayeEspece());
+        dto.setMontantPayeCheque(bean.getMontantPayeCheque());
+        dto.setMontantTotal(bean.getMontantTotal());
+        dto.setRef(bean.getRef());
+
         return dto;
     }
 
-    public List<Commande> toBean(List<CommandeDto> dtos){
+    public List<Commande> toBean(List<CommandeDto> dtos) {
         List<Commande> beans = new ArrayList<>();
         for (CommandeDto dto : dtos) {
             beans.add(toBean(dto));
         }
         return beans;
     }
+
     public List<CommandeDto> toDto(List<Commande> beans) {
         List<CommandeDto> dtos = new ArrayList<>();
         for (Commande dto : beans) {
@@ -47,4 +67,6 @@ public class CommandeConverter {
         return dtos;
     }
 
+    @Autowired
+   private PaiementConverter paiementConverter;
 }

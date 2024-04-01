@@ -20,11 +20,12 @@ import usa.harvard.tp1_commande.ws.dto.CommandeDto;
 import usa.harvard.tp1_commande.ws.dto.PaiementDto;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PaiementServiceImpl implements PaimentService {
-    private static final String CHEQUE = "CHEQUE";
-    private static final String ESPECE = "ESPECE";
+    private static final String CHEQUE = "01234";
+    private static final String ESPECE = "56789";
 
     @Override
     public List<PaiementDto> findAll() {
@@ -47,7 +48,7 @@ public class PaiementServiceImpl implements PaimentService {
             Commande commande = paiement.getCommande();
             commande.setMontantPayeCheque(commande.getMontantPayeCheque() - paiement.getMontant());
             commande.setMontantPayeEspece(commande.getMontantPayeEspece() - paiement.getMontant());
-            commandeService.update(commandeConverter.toDto(commande));
+            commandeDao.save(commande);
             return 1;
         }
     }
@@ -144,38 +145,38 @@ public class PaiementServiceImpl implements PaimentService {
 
 
     public int save(String refCommande, PaiementDto paiement) {
+        Commande command = commandeDao.findByRef(refCommande);
         if (paiement == null || refCommande==null) {
             return -1;
         }
-
-        Paiement existingPaiement = paiementDao.findByCode(paiement.getCode());
-        if (existingPaiement != null) {
-            update(paiement);
-            return 2;
-        }
-
-        Paiement paiement1 = paiementConverter.toBean(paiement);
-
-        Commande command = commandeDao.findByRef(refCommande);
-        TypePaiement typePaiement = typePaiementDao.findByCode(paiement.getTypePaiementDto().getCode());
-
-        if (command == null || typePaiement == null) {
+         else if(!Objects.equals(paiement.getCommandeDto().getRef(), refCommande)){
             return -2;
         }
+         else {
+            Paiement existingPaiement = paiementDao.findByCode(paiement.getCode());
+            if (existingPaiement != null) {
+                update(paiement);
+                return 2;
+            }
+            Paiement paiement1 = paiementConverter.toBean(paiement);
 
-        command.setMontantPayeCheque(command.getMontantPayeCheque() - paiement.getMontant());
-        command.setMontantPayeEspece(command.getMontantPayeEspece() - paiement.getMontant());
-        commandeDao.save(command);
-        typePaiementDao.save(typePaiement);
+            TypePaiement typePaiement = typePaiementDao.findByCode(paiement.getTypePaiementDto().getCode());
 
-        paiement1.setCommande(command);
-        paiement1.setTypePaiement(typePaiement);
-        paiementDao.save(paiement1);
+            if (command == null || typePaiement == null) {
+                return -3;
+            }
+            command.setMontantPayeCheque(command.getMontantPayeCheque() - paiement.getMontant());
+            command.setMontantPayeEspece(command.getMontantPayeEspece() - paiement.getMontant());
+            commandeDao.save(command);
+            typePaiementDao.save(typePaiement);
 
-        return 1;
+            paiement1.setCommande(command);
+            paiement1.setTypePaiement(typePaiement);
+            paiementDao.save(paiement1);
+
+            return 1;
+        }
     }
-
-
 
     @Override
     public int update(PaiementDto paiementDto) {
@@ -199,6 +200,12 @@ public class PaiementServiceImpl implements PaimentService {
     public int deleteByCode(String code) {
         return paiementDao.deleteByCode(code);
     }
+
+    @Override
+    public List<Paiement> findPaiementByCommandeRef(String refCommande) {
+        return paiementDao.findPaiementByCommandeRef(refCommande);
+    }
+
 
     @Autowired
     private PaiementDao paiementDao;

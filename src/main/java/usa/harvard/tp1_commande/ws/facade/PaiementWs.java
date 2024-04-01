@@ -11,6 +11,14 @@ import java.util.List;
 @RestController
 @RequestMapping("api/paiement/")
 public class PaiementWs {
+
+
+
+    @GetMapping("/listPaimentByCommandeRef/{refCommande}")
+    public List<Paiement> findPaiementByCommandeRef(@PathVariable String refCommande) {
+        return service.findPaiementByCommandeRef(refCommande);
+    }
+
     @Autowired
     private PaimentService service;
 
@@ -29,6 +37,11 @@ public class PaiementWs {
     public int encasser(@PathVariable String code) {
         return service.encasser(code);
     }
+    @PutMapping
+    public int update(PaiementDto paiementDto) {
+        return service.update(paiementDto);
+    }
+
 
     @PostMapping("/refCommande/{refCommande}")
     public int save(@PathVariable String refCommande, @RequestBody PaiementDto paiement) {
