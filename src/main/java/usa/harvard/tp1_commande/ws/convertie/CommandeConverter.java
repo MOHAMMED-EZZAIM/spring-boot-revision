@@ -16,19 +16,8 @@ import usa.harvard.tp1_commande.ws.dto.CommandeDto;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static usa.harvard.tp1_commande.enume.TypePaimentEnum.CHEQUE;
-import static usa.harvard.tp1_commande.enume.TypePaimentEnum.ESPECE;
-
 @Component
 public class CommandeConverter {
-    private String ref;
-    private double montantTotal;
-    private double montantPayeCheque;
-    private double montantPayeEspece;
-
-    @OneToMany
-    private List<Paiement> paiementList;
 
     public Commande toBean(CommandeDto dto) {
         Commande bean = new Commande();
