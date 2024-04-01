@@ -1,6 +1,7 @@
 package usa.harvard.tp1_commande.service.facade;
 import org.springframework.transaction.annotation.Transactional;
 import usa.harvard.tp1_commande.bean.Paiement;
+import usa.harvard.tp1_commande.ws.dto.CommandeDto;
 import usa.harvard.tp1_commande.ws.dto.PaiementDto;
 
 import java.util.List;

@@ -19,20 +19,16 @@ import java.util.List;
 
     @Override
     public TypePaiementDto findByCode(String code) {
+
         return converter.toDto(typePaiementDao.findByCode(code));
     }
 
     @Override
     public int save(TypePaiementDto typePaiement) {
-       if(typePaiement==null){
+        if(typePaiementDao.findByCode(typePaiement.getCode())!=null){
            return -1;
        }
-       else if(typePaiementDao.findByCode(typePaiement.getCode())!=null){
-            update(typePaiement);
-           return 2;
-       }
        else {
-
             System.out.println(typePaiement.getCode());
             System.out.println(typePaiement.getLibelle());
             typePaiementDao.save(converter.toBean(typePaiement));

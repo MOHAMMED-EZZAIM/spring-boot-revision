@@ -11,20 +11,10 @@ import usa.harvard.tp1_commande.service.facade.CommandeService;
 import usa.harvard.tp1_commande.ws.convertie.CommandeConverter;
 import usa.harvard.tp1_commande.ws.dto.CommandeDto;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
 public class CommandeServiceImpl implements CommandeService {
-    @Override
-    public List<Paiement> getPaiementsByCommandeId(String ref) {
-        Commande commande = commandeDao.findByRef(ref);
-        if (commande != null) {
-            return commande.getPaiementList();
-        } else {
-            return Collections.emptyList();
-        }
-    }
 
     @Override
     public List<CommandeDto> findAll() {
@@ -51,11 +41,12 @@ public class CommandeServiceImpl implements CommandeService {
         } else if (commandeDto.getMontantTotal() == 0) {
             return -3;
         } else if (existingCommande != null) {
-            update(commandeDto);
+            BeanUtils.copyProperties(commandeDto, existingCommande);
+            commandeDao.save(existingCommande);
             return 2;
         } else {
-//            List<Paiement> list=nouveauCommande.getPaiementList();
-//            nouveauCommande.setPaiementList(list);
+            List<Paiement> list=nouveauCommande.getPaiementList();
+            nouveauCommande.setPaiementList(list);
             commandeDao.save(nouveauCommande);
             return 1;
 
@@ -81,8 +72,7 @@ public class CommandeServiceImpl implements CommandeService {
     public int update(CommandeDto commandeDto) {
         Commande existingCommande = commandeDao.findByRef(commandeDto.getRef());
         if (existingCommande != null) {
-            BeanUtils.copyProperties(commandeDto, existingCommande);
-            commandeDao.save(existingCommande);
+            save(commandeDto);
             return 1;
         } else {
             return -1;

@@ -1,7 +1,6 @@
 package usa.harvard.tp1_commande.ws.facade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import usa.harvard.tp1_commande.bean.Paiement;
 import usa.harvard.tp1_commande.service.facade.CommandeService;
 import usa.harvard.tp1_commande.ws.dto.CommandeDto;
 
@@ -43,11 +42,6 @@ public class CommandeWs {
     @PutMapping
     public int update(@RequestBody CommandeDto commandeDto) {
       return  commandeService.update(commandeDto);
-    }
-
-    @GetMapping("/listPaiment/ref/{ref}")
-    public List<Paiement> getPaiementsByCommandeId(@PathVariable String ref) {
-        return commandeService.getPaiementsByCommandeId(ref);
     }
 
     @Autowired
