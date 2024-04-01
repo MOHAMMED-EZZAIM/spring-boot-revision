@@ -1,5 +1,6 @@
 package usa.harvard.tp1_commande.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,11 +16,12 @@ import java.time.LocalDateTime;
 @Entity
 public class Paiement {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private String code;
 
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime datePaiement;
 
     private double montant;
@@ -27,9 +29,9 @@ public class Paiement {
     @JsonProperty("encaissement")
     private boolean encaissement;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private TypePaiement typePaiement;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Commande commande;
 }

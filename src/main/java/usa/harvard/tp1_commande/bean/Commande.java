@@ -17,4 +17,7 @@ public class Commande {
     private double montantTotal;
     private double montantPayeCheque;
     private double montantPayeEspece;
+
+    @OneToMany
+    private List<Paiement> paiementList;
 }

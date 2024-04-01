@@ -1,4 +1,6 @@
 package usa.harvard.tp1_commande.service.impl;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +18,17 @@ import usa.harvard.tp1_commande.ws.convertie.PaiementConverter;
 import usa.harvard.tp1_commande.ws.convertie.TypePaiementConverter;
 import usa.harvard.tp1_commande.ws.dto.CommandeDto;
 import usa.harvard.tp1_commande.ws.dto.PaiementDto;
-import usa.harvard.tp1_commande.ws.dto.TypePaiementDto;
+
 import java.util.List;
-import static usa.harvard.tp1_commande.enume.TypePaimentEnum.CHEQUE;
-import static usa.harvard.tp1_commande.enume.TypePaimentEnum.ESPECE;
 
 @Service
 public class PaiementServiceImpl implements PaimentService {
-    private static final String  CHEQUE="CHEQUE";
-    private static  final String ESPECE="ESPECE";
+    private static final String CHEQUE = "CHEQUE";
+    private static final String ESPECE = "ESPECE";
+
     @Override
-    public List<Paiement> findAll() {
-        return  paiementDao.findAll();
+    public List<PaiementDto> findAll() {
+        return paiementConverter.toDto(paiementDao.findAll());
     }
 
     @Override
@@ -51,35 +52,36 @@ public class PaiementServiceImpl implements PaimentService {
         }
     }
 
-    @Override
-    public int save(String refCommande, Paiement paiement) {
-        if(paiement!=null){
-            Commande commandeDto=commandeDao.findByRef(refCommande);
-            TypePaiement typePaiementDto=typePaiementDao.findByCode(paiement.getTypePaiement().getCode());
-            if(commandeDto!=null&&typePaiementDto!=null){
-                commandeDto.setMontantPayeCheque(commandeDto.getMontantPayeCheque()-paiement.getMontant());
-                commandeDto.setMontantPayeEspece(commandeDto.getMontantPayeEspece()-paiement.getMontant());
-                commandeDao.save(commandeDto);
-                typePaiementDao.save(typePaiementDto);
+//    @Override
+//    public int save(String refCommande, PaiementDto paiement) {
+//        if(paiement!=null){
+//            CommandeDto commandeDto=commandeConverter.toDto(commandeDao.findByRef(refCommande));
+//            TypePaiementDto typePaiementDto=typePaiementConverter.toDto(typePaiementDao.findByCode(paiement.getTypePaiementDto().getCode()));
+//            if(commandeDto!=null&&typePaiementDto!=null){
+//                commandeDto.setMontantPayeCheque(commandeDto.getMontantPayeCheque()-paiement.getMontant());
+//                commandeDto.setMontantPayeEspece(commandeDto.getMontantPayeEspece()-paiement.getMontant());
+//                commandeDao.save(commandeConverter.toBean(commandeDto));
+//                typePaiementDao.save(typePaiementConverter.toBean(typePaiementDto));
+//
+//                System.out.println("=======================================");
+//                System.out.println(paiement.getTypePaiementDto().getCode());
+//                System.out.println(paiement.getCommandeDto().getRef());
+//                System.out.println("=======================================");
+//
+//                paiement.setCommandeDto(commandeDto);
+//                paiement.setTypePaiementDto(typePaiementDto);
+//                paiementDao.save(paiementConverter.toBean(paiement));
+//                return 1;
+//            }
+//            else {
+//                return -1;
+//            }
+//        }
+//        else {
+//            return -2;
+//        }
+//    }
 
-                System.out.println("=======================================");
-                System.out.println(paiement.getTypePaiement().getCode());
-                System.out.println(paiement.getCommande().getRef());
-                System.out.println("=======================================");
-
-                paiement.setCommande(commandeDto);
-                paiement.setTypePaiement(typePaiementDto);
-                paiementDao.save(paiement);
-                return 1;
-            }
-            else {
-                return -1;
-            }
-        }
-        else {
-            return -2;
-        }
-    }
 
 //    @Override
 //    public int save(String refCommande, PaiementDto paiement) {
@@ -113,37 +115,83 @@ public class PaiementServiceImpl implements PaimentService {
 //    }
 
 //    public int save(String refCommande, PaiementDto paiement) {
-//        if(paiement!=null){
-//            CommandeDto commandeDto=commandeService.findByRef(refCommande);
-//            TypePaiementDto typePaiementDto=typePaiementService.findByCode(paiement.getTypePaiementDto().getCode());
-//            if(commandeDto!=null&&typePaiementDto!=null){
-//                commandeDto.setMontantPayeCheque(commandeDto.getMontantPayeCheque()-paiement.getMontant());
-//                commandeDto.setMontantPayeEspece(commandeDto.getMontantPayeEspece()-paiement.getMontant());
-//                commandeService.save(commandeDto);
-//                typePaiementService.save(typePaiementDto);
+//        if (paiement != null && paiementDao.findByCode(paiement.getCode()) == null) {
+//            Paiement paiement1 = paiementConverter.toBean(paiement);
+//            Commande command = commandeDao.findByRef(refCommande);
+//            TypePaiement typePaiement = typePaiementDao.findByCode(paiement.getTypePaiementDto().getCode());
 //
-//                System.out.println("=======================================");
-//                System.out.println(paiement.getTypePaiementDto().getCode());
-//                System.out.println(paiement.getCommandeDto().getRef());
-//                System.out.println("=======================================");
+//            if (command != null && typePaiement != null) {
+//                command.setMontantPayeCheque(command.getMontantPayeCheque() - paiement.getMontant());
+//                command.setMontantPayeEspece(command.getMontantPayeEspece() - paiement.getMontant());
+//                commandeDao.save(command);
+//                typePaiementDao.save(typePaiement);
 //
-//                paiement.setCommandeDto(commandeDto);
-//                paiement.setTypePaiementDto(typePaiementDto);
-//                paiementDao.save(paiementConverter.toBean(paiement));
+//                paiement1.setCommande(command);
+//                paiement1.setTypePaiement(typePaiement);
+//                paiementDao.save(paiement1);
 //                return 1;
+//            } else {
+//                return -2;
 //            }
-//            else {
-//                return -1;
-//            }
-//        }
-//        else {
-//            return -2;
+//        } else if (paiement != null && paiementDao.findByCode(paiement.getCode()) != null) {
+//            update(paiement);
+//            return 2;
+//        } else {
+//            return -1;
 //        }
 //    }
 
+
+
+    public int save(String refCommande, PaiementDto paiement) {
+        if (paiement == null || refCommande==null) {
+            return -1;
+        }
+
+        Paiement existingPaiement = paiementDao.findByCode(paiement.getCode());
+        if (existingPaiement != null) {
+            update(paiement);
+            return 2;
+        }
+
+        Paiement paiement1 = paiementConverter.toBean(paiement);
+
+        Commande command = commandeDao.findByRef(refCommande);
+        TypePaiement typePaiement = typePaiementDao.findByCode(paiement.getTypePaiementDto().getCode());
+
+        if (command == null || typePaiement == null) {
+            return -2;
+        }
+
+        command.setMontantPayeCheque(command.getMontantPayeCheque() - paiement.getMontant());
+        command.setMontantPayeEspece(command.getMontantPayeEspece() - paiement.getMontant());
+        commandeDao.save(command);
+        typePaiementDao.save(typePaiement);
+
+        paiement1.setCommande(command);
+        paiement1.setTypePaiement(typePaiement);
+        paiementDao.save(paiement1);
+
+        return 1;
+    }
+
+
+
     @Override
-    public Paiement findByCode(String code) {
-        return paiementDao.findByCode(code);
+    public int update(PaiementDto paiementDto) {
+        Paiement existingPaiment = paiementDao.findByCode(paiementDto.getCode());
+        if (existingPaiment != null) {
+            BeanUtils.copyProperties(paiementDto, existingPaiment);
+            paiementDao.save(existingPaiment);
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
+    public PaiementDto findByCode(String code) {
+        return paiementConverter.toDto(paiementDao.findByCode(code));
     }
 
     @Transactional

@@ -1,61 +1,24 @@
 package usa.harvard.tp1_commande.ws.dto;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
+@Setter
+@Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PaiementDto {
     private String code;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime datePaiement ;
     private double montant;
+    @JsonProperty("encaissement")
     private  boolean encaissement ;
     private TypePaiementDto typePaiementDto;
     private CommandeDto commandeDto ;
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public LocalDateTime getDatePaiement() {
-        return datePaiement;
-    }
-
-    public void setDatePaiement(LocalDateTime datePaiement) {
-        this.datePaiement = datePaiement;
-    }
-
-    public double getMontant() {
-        return montant;
-    }
-
-    public void setMontant(double montant) {
-        this.montant = montant;
-    }
-
-    public boolean isEncaissement() {
-        return encaissement;
-    }
-
-    public void setEncaissement(boolean encaissement) {
-        this.encaissement = encaissement;
-    }
-
-    public TypePaiementDto getTypePaiementDto() {
-        return typePaiementDto;
-    }
-
-    public void setTypePaiementDto(TypePaiementDto typePaiementDto) {
-        this.typePaiementDto = typePaiementDto;
-    }
-
-    public CommandeDto getCommandeDto() {
-        return commandeDto;
-    }
-
-    public void setCommandeDto(CommandeDto commandeDto) {
-        this.commandeDto = commandeDto;
-    }
 }

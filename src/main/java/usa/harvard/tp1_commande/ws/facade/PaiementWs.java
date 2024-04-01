@@ -20,23 +20,23 @@ public class PaiementWs {
     }
 
     @GetMapping("/code/{code}")
-    public Paiement findByCode(@PathVariable String code) { // Ajout de @PathVariable
+    public PaiementDto findByCode(@PathVariable String code) { // Ajout de @PathVariable
         return service.findByCode(code);
     }
 
 
     @PutMapping("/encaisser/{code}")
-    public int encasser(@PathVariable String code) { // Correction de la faute de frappe dans le nom du chemin
-        return service.encasser(code); // Correction de la faute de frappe dans le nom de la méthode
+    public int encasser(@PathVariable String code) {
+        return service.encasser(code);
     }
 
     @PostMapping("/refCommande/{refCommande}")
-    public int save(@PathVariable String refCommande, @RequestBody Paiement paiement) { // Ajout de @PathVariable
+    public int save(@PathVariable String refCommande, @RequestBody PaiementDto paiement) {
         return service.save(refCommande, paiement);
     }
 
     @GetMapping
-    public List<Paiement> findAll() {
+    public List<PaiementDto> findAll() {
         return service.findAll();
     }
 }
